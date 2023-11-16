@@ -65,7 +65,7 @@ public class PessoaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pessoa não encontrado.");
         } else {
             this.pessoaService.excluirPessoa((PessoaModel)pessoa.get());
-            return ResponseEntity.status(HttpStatus.OK).body("Projeto deletado com sucesso.");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Projeto deletado com sucesso.");
         }
     }
 }
