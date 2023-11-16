@@ -13,17 +13,20 @@ public class PessoaModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome", nullable = false, length = 100)
+    @Column(name = "nome")
     private String nome;
 
     @Column(name = "datanascimento")
     private Date datanascimento;
 
-    @Column(name = "cpf", length = 14)
+    @Column(name = "cpf")
     private String cpf;
 
     @Column(name="funcionario")
     private Boolean funcionario;
+
+    @Column(name="atribuicao")
+    private String atribuicao;
 
     public PessoaModel(){
     }
@@ -68,12 +71,21 @@ public class PessoaModel {
         this.funcionario = funcionario;
     }
 
+    public String getAtribuicao() {
+        return atribuicao;
+    }
 
-    public PessoaModel(Long id, String nome, Date datanascimento, String cpf, Boolean funcionario) {
+    public void setAtribuicao(String atribuicao) {
+        this.atribuicao = atribuicao;
+    }
+
+    public PessoaModel(Long id, String nome, Date datanascimento, String cpf, Boolean funcionario, String atribuicao) {
         this.id = id;
         this.nome = nome;
         this.datanascimento = datanascimento;
         this.cpf = cpf;
         this.funcionario = funcionario;
+        this.atribuicao = atribuicao;
     }
+
 }
