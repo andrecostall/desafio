@@ -1,10 +1,18 @@
 package com.codegroup.desafio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "pessoa")
 public class PessoaModel {
@@ -27,65 +35,5 @@ public class PessoaModel {
 
     @Column(name="atribuicao")
     private String atribuicao;
-
-    public PessoaModel(){
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Date getDatanascimento() {
-        return datanascimento;
-    }
-
-    public void setDatanascimento(Date datanascimento) {
-        this.datanascimento = datanascimento;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public Boolean getFuncionario() {
-        return funcionario;
-    }
-
-    public void setFuncionario(Boolean funcionario) {
-        this.funcionario = funcionario;
-    }
-
-    public String getAtribuicao() {
-        return atribuicao;
-    }
-
-    public void setAtribuicao(String atribuicao) {
-        this.atribuicao = atribuicao;
-    }
-
-    public PessoaModel(Long id, String nome, Date datanascimento, String cpf, Boolean funcionario, String atribuicao) {
-        this.id = id;
-        this.nome = nome;
-        this.datanascimento = datanascimento;
-        this.cpf = cpf;
-        this.funcionario = funcionario;
-        this.atribuicao = atribuicao;
-    }
 
 }

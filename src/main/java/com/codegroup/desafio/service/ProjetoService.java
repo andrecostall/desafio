@@ -5,21 +5,19 @@ import com.codegroup.desafio.enums.Status;
 import com.codegroup.desafio.model.PessoaModel;
 import com.codegroup.desafio.model.ProjetoModel;
 import com.codegroup.desafio.repository.ProjetoRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ProjetoService {
 
     private final ProjetoRepository projetoRepository;
     private final PessoaService pessoaService;
-
-    public ProjetoService(ProjetoRepository projetoRepository, PessoaService pessoaService) {
-        this.projetoRepository = projetoRepository;
-        this.pessoaService = pessoaService;
-    }
 
     public List<ProjetoModel> listarTodosProjetos() {
         return this.projetoRepository.findAll();
@@ -33,23 +31,23 @@ public class ProjetoService {
         if (projetoModel.getMembros() != null && !projetoModel.getMembros().isEmpty()) {
             for(int i = 0; i < projetoModel.getMembros().size(); ++i) {
                 Optional<PessoaModel> pessoa = Optional.ofNullable(projetoModel.getMembros().get(i));
-                pessoa = this.pessoaService.encontrarPessoaPorId((pessoa.get()).getId());
+                pessoa = this.pessoaService.encontrarPessoaPorId(pessoa.get().getId());
                 if (pessoa.isPresent() && !pessoa.get().getFuncionario()) {
-                    throw new IllegalArgumentException((pessoa.get()).getNome() + " não é funcionário(a).");
+                    throw new IllegalArgumentException(pessoa.get().getNome() + " não é um funcionário(a).");
                 }
                 projetoModel.getMembros().set(i, pessoa.get());
             }
         }
 
-        if (projetoModel.getOrcamento() != null) {
-            if ((double)projetoModel.getOrcamento() <= 100000.0) {
-                projetoModel.setRisco(String.valueOf(Risco.BAIXA.getDescricao()));
-            } else if ((double)projetoModel.getOrcamento() <= 500000.0) {
-                projetoModel.setRisco(String.valueOf(Risco.MEDIA.getDescricao()));
+        Optional.ofNullable(projetoModel.getOrcamento()).ifPresent(orcamento -> {
+            if (orcamento <= 100000.0) {
+                projetoModel.setRisco(Risco.BAIXA.getDescricao());
+            } else if (orcamento <= 500000.0) {
+                projetoModel.setRisco(Risco.MEDIA.getDescricao());
             } else {
-                projetoModel.setRisco(String.valueOf(Risco.ALTO.getDescricao()));
+                projetoModel.setRisco(Risco.ALTO.getDescricao());
             }
-        }
+        });
 
         if (projetoModel.getStatus() == null || !this.StatusProjetoValido(projetoModel.getStatus())) {
             projetoModel.setStatus(Status.EM_ANALISE);
@@ -65,11 +63,18 @@ public class ProjetoService {
     public void excluirProjeto(ProjetoModel projetoModel) throws IllegalArgumentException {
         Optional<ProjetoModel> projetoOptional = this.projetoRepository.findById(projetoModel.getId());
         if (projetoOptional.isPresent()) {
-            if (!this.podeExcluirProjeto(((ProjetoModel)projetoOptional.get()).getStatus())) {
+            if (!this.podeExcluirProjeto(projetoOptional.get().getStatus())) {
                 throw new IllegalStateException("Não é permitido excluir um projeto com status iniciado, em andamento ou encerrado.");
             }
-
             this.projetoRepository.deleteById(projetoModel.getId());
+        }
+    }
+
+    public void excluirMembroProjeto(Long projetoId, Long pessoaId) throws IllegalArgumentException {
+        Optional<ProjetoModel> projeto = this.projetoRepository.findById(projetoId);
+        if(!projeto.get().getMembros().contains(pessoaId)){
+            //throw new NotFoundException("O membro não é um membro do projeto.");
+
         }
 
     }

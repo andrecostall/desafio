@@ -3,6 +3,8 @@ package com.codegroup.desafio.controller;
 import com.codegroup.desafio.dto.ProjetoDto;
 import com.codegroup.desafio.model.ProjetoModel;
 import com.codegroup.desafio.service.ProjetoService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +15,9 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
+@AllArgsConstructor
 public class ProjetoController {
     private final ProjetoService projetoService;
-    public ProjetoController(ProjetoService projetoService) {
-        this.projetoService = projetoService;
-    }
 
     @GetMapping("/projeto")
     public ResponseEntity<List<ProjetoModel>> listarProjetos() {
@@ -29,7 +29,7 @@ public class ProjetoController {
     }
 
     @PostMapping("/projeto")
-    public ResponseEntity<ProjetoModel> salvarProjeto(@RequestBody ProjetoDto projetoDto) {
+    public ResponseEntity<ProjetoModel> salvarProjeto(@RequestBody @Valid ProjetoDto projetoDto) {
         var projeto = new ProjetoModel();
         BeanUtils.copyProperties(projetoDto, projeto);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.projetoService.salvarProjeto(projeto));
@@ -56,7 +56,7 @@ public class ProjetoController {
     }
 
     @PutMapping("/projeto/{id}")
-    public ResponseEntity atualizarProjeto(@PathVariable("id") long id, @RequestBody ProjetoDto projetoDto) {
+    public ResponseEntity atualizarProjeto(@PathVariable("id") long id, @RequestBody @Valid ProjetoDto projetoDto) {
         Optional<ProjetoModel> projeto = this.projetoService.encontrarProjetoPorId(id);
         if (projeto.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Projeto não encontrado.");

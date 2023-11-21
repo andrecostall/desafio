@@ -45,7 +45,7 @@ public class PessoaTest {
                 .exchange("/api/pessoa", HttpMethod.POST, httpEntity, PessoaDto.class);
 
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
-        Assertions.assertEquals(response.getBody().cpf(),"987.654.321-09");
+        Assertions.assertEquals(response.getBody().getCpf(),"987.654.321-09");
     }
 
     @Test
@@ -68,8 +68,8 @@ public class PessoaTest {
                 .exchange("/api/pessoa/" + pessoaData.getId(), HttpMethod.PUT, httpEntity, PessoaDto.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
 
-        Assertions.assertEquals(response.getBody().funcionario(), false);
-        Assertions.assertEquals(response.getBody().cpf(), "987.654.321-15");
+        Assertions.assertEquals(response.getBody().getFuncionario(), false);
+        Assertions.assertEquals(response.getBody().getCpf(), "987.654.321-15");
     }
 
     @Test
@@ -83,9 +83,7 @@ public class PessoaTest {
 
     @Test
     public void removerPessoaTest() {
-
         PessoaModel pessoaData = this.pessoaService.salvarPessoa(this.pessoa);
-
         ResponseEntity<Void> response = this.testRestTemplate
                 .exchange("/api/pessoa/" + pessoaData.getId(), HttpMethod.DELETE, null, Void.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.NO_CONTENT);

@@ -3,8 +3,13 @@ package com.codegroup.desafio.controller;
 import com.codegroup.desafio.dto.PessoaDto;
 import com.codegroup.desafio.model.PessoaModel;
 import com.codegroup.desafio.service.PessoaService;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping({"/api"})
+@AllArgsConstructor
 public class PessoaController {
     private final PessoaService pessoaService;
-
-    public PessoaController(PessoaService pessoaService) {
-        this.pessoaService = pessoaService;
-    }
 
     @GetMapping({"/pessoa"})
     public ResponseEntity<List<PessoaModel>> listarProjetos() {
@@ -33,7 +35,7 @@ public class PessoaController {
     }
 
     @PostMapping({"/pessoa"})
-    public ResponseEntity<PessoaModel> salvarProjeto(@RequestBody PessoaDto pessoaDto) {
+    public ResponseEntity<PessoaModel> salvarPessoa(@RequestBody @Valid PessoaDto pessoaDto) {
         PessoaModel pessoa = new PessoaModel();
         BeanUtils.copyProperties(pessoaDto, pessoa);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.pessoaService.salvarPessoa(pessoa));
@@ -43,7 +45,7 @@ public class PessoaController {
     public ResponseEntity encontrarPessoaPorId(@PathVariable("id") Long id) {
         Optional<PessoaModel> pessoa = this.pessoaService.encontrarPessoaPorId(id);
         return pessoa.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pessoa não encontrado.") :
-                ResponseEntity.status(HttpStatus.OK).body((PessoaModel)pessoa.get());
+                ResponseEntity.status(HttpStatus.OK).body(pessoa.get());
     }
 
     @PutMapping({"/pessoa/{id}"})
@@ -52,7 +54,7 @@ public class PessoaController {
         if (pessoa.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pessoa não encontrado.");
         } else {
-            PessoaModel pessoaData = (PessoaModel)pessoa.get();
+            PessoaModel pessoaData = pessoa.get();
             BeanUtils.copyProperties(pessoaDto, pessoaData);
             return ResponseEntity.status(HttpStatus.OK).body(this.pessoaService.atualizarPessoa(pessoaData));
         }
@@ -64,8 +66,9 @@ public class PessoaController {
         if (pessoa.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pessoa não encontrado.");
         } else {
-            this.pessoaService.excluirPessoa((PessoaModel)pessoa.get());
+            this.pessoaService.excluirPessoa(pessoa.get());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Projeto deletado com sucesso.");
         }
     }
+
 }
